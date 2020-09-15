@@ -17,7 +17,7 @@ class Data:
 
     def __init(self, dict_address: str):
         json_list = []
-        for root, dic, files in os.walk(dict_address):  #读取多个json文件
+        for root, dic, files in os.walk(dict_address):  
             for f in files:
                 if f[-5:] == '.json':
                     json_path = f
@@ -28,24 +28,23 @@ class Data:
                             json_list.append(json.loads(_str))
                         except:
                             pass
-        #records = self.__listOfNestedDict2ListOfDict(json_list)
         self.__4Events4PerP = {}
         self.__4Events4PerR = {}
         self.__4Events4PerPPerR = {}
-        for i in records:
-            if not self.__4Events4PerP.get(i['actor__login'], 0):
-                self.__4Events4PerP.update({i['actor__login']: {}})
-                self.__4Events4PerPPerR.update({i['actor__login']: {}})
-            self.__4Events4PerP[i['actor__login']][i['type']
-                                         ] = self.__4Events4PerP[i['actor__login']].get(i['type'], 0)+1
-            if not self.__4Events4PerR.get(i['repo__name'], 0):
-                self.__4Events4PerR.update({i['repo__name']: {}})
-            self.__4Events4PerR[i['repo__name']][i['type']
-                                       ] = self.__4Events4PerR[i['repo__name']].get(i['type'], 0)+1
-            if not self.__4Events4PerPPerR[i['actor__login']].get(i['repo__name'], 0):
-                self.__4Events4PerPPerR[i['actor__login']].update({i['repo__name']: {}})
-            self.__4Events4PerPPerR[i['actor__login']][i['repo__name']][i['type']
-                                                          ] = self.__4Events4PerPPerR[i['actor__login']][i['repo__name']].get(i['type'], 0)+1
+        for i in json_list:
+            if not self.__4Events4PerP.get(i['actor']['login'], 0):
+                self.__4Events4PerP.update({i['actor']['login']: {}})
+                self.__4Events4PerPPerR.update({i['actor']['login']: {}})
+            self.__4Events4PerP[i['actor']['login']][i['type']
+                                         ] = self.__4Events4PerP[i['actor']['login']].get(i['type'], 0)+1
+            if not self.__4Events4PerR.get(i['repo']['name'], 0):
+                self.__4Events4PerR.update({i['repo']['name']: {}})
+            self.__4Events4PerR[i['repo']['name']][i['type']
+                                       ] = self.__4Events4PerR[i['repo']['name']].get(i['type'], 0)+1
+            if not self.__4Events4PerPPerR[i['actor']['login']].get(i['repo']['name'], 0):
+                self.__4Events4PerPPerR[i['actor']['login']].update({i['repo']['name']: {}})
+            self.__4Events4PerPPerR[i['actor']['login']][i['repo']['name']][i['type']
+                                                          ] = self.__4Events4PerPPerR[i['actor']['login']][i['repo']['name']].get(i['type'], 0)+1
         with open('1.json', 'w', encoding='utf-8') as f:
             json.dump(self.__4Events4PerP,f)
         with open('2.json', 'w', encoding='utf-8') as f:
@@ -101,7 +100,7 @@ class Run:
                     else:
                         res = self.data.getEventsUsers(self.parser.parse_args().user, self.parser.parse_args().event)
                 elif self.parser.parse_args().repo:
-                    res = self.data.getEventsRepos(self.parser.parse_args().reop, self.parser.parse_args().event)
+                    res = self.data.getEventsRepos(self.parser.parse_args().repo, self.parser.parse_args().event)
                 else:
                     raise RuntimeError('error: argument -l or -c are required')
             else:
