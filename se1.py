@@ -17,19 +17,18 @@ class Data:
 
     def __init(self, dict_address: str):
         json_list = []
-        for root, dic, files in os.walk(dict_address):
+        for root, dic, files in os.walk(dict_address):  #读取多个json文件
             for f in files:
                 if f[-5:] == '.json':
                     json_path = f
-                    x = open(dict_address+'\\'+json_path,
-                             'r', encoding='utf-8').read()
+                    x = open(dict_address+'\\'+json_path,'r', encoding='utf-8').read()
                     str_list = [_x for _x in x.split('\n') if len(_x) > 0]
                     for i, _str in enumerate(str_list):
                         try:
                             json_list.append(json.loads(_str))
                         except:
                             pass
-        records = self.__listOfNestedDict2ListOfDict(json_list)
+        #records = self.__listOfNestedDict2ListOfDict(json_list)
         self.__4Events4PerP = {}
         self.__4Events4PerR = {}
         self.__4Events4PerPPerR = {}
@@ -53,23 +52,6 @@ class Data:
             json.dump(self.__4Events4PerR,f)
         with open('3.json', 'w', encoding='utf-8') as f:
             json.dump(self.__4Events4PerPPerR,f)
-
-    def __parseDict(self, d: dict, prefix: str):
-        _d = {}
-        for k in d.keys():
-            if str(type(d[k]))[-6:-2] == 'dict':
-                _d.update(self.__parseDict(d[k], k))
-            else:
-                _k = f'{prefix}__{k}' if prefix != '' else k
-                _d[_k] = d[k]
-        return _d
-
-    def __listOfNestedDict2ListOfDict(self, a: list):
-        records = []
-        for d in a:
-            _d = self.__parseDict(d, '')
-            records.append(_d)
-        return records
 
     def getEventsUsers(self, username: str, event: str) -> int:
         if not self.__4Events4PerP.get(username,0):
@@ -115,14 +97,11 @@ class Run:
             if self.parser.parse_args().event:
                 if self.parser.parse_args().user:
                     if self.parser.parse_args().repo:
-                        res = self.data.getEventsUsersAndRepos(
-                            self.parser.parse_args().user, self.parser.parse_args().repo, self.parser.parse_args().event)
+                        res = self.data.getEventsUsersAndRepos(self.parser.parse_args().user, self.parser.parse_args().repo, self.parser.parse_args().event)
                     else:
-                        res = self.data.getEventsUsers(
-                            self.parser.parse_args().user, self.parser.parse_args().event)
+                        res = self.data.getEventsUsers(self.parser.parse_args().user, self.parser.parse_args().event)
                 elif self.parser.parse_args().repo:
-                    res = self.data.getEventsRepos(
-                        self.parser.parse_args().reop, self.parser.parse_args().event)
+                    res = self.data.getEventsRepos(self.parser.parse_args().reop, self.parser.parse_args().event)
                 else:
                     raise RuntimeError('error: argument -l or -c are required')
             else:
